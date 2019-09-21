@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" " http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wx.securitydemo1.dao.UserMapper">
+    <!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！ -->
+    <resultMap id="BaseResultMap" type="com.wx.securitydemo1.domain.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="username" property="userName" jdbcType="VARCHAR"/>
+        <id column="password" property="passWord" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--关联到用户的权限信息-->
+    <resultMap type="com.wx.securitydemo1.domain.User" id="UserBaseResultMap" extends="BaseResultMap">
+        <collection property="authorities" ofType="com.wx.securitydemo1.domain.Role">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="queryUserByuserName"
+            resultMap="UserBaseResultMap"
+            parameterType="com.wx.securitydemo1.domain.User">
+
+        SELECT u.*,r.name
+        FROM user u,user_role ur,role r
+        <where>
+            <if test="user.username!=null and user.username!=''">
+                 u.username=#{user.username}
+                AND u.id=ur.user_id
+                AND r.id=ur.role_id
+            </if>
+        </where>
+    </select>
+
+    <select id="list" parameterType="com.wx.securitydemo1.domain.User" resultMap="BaseResultMap">
+        SELECT u.* FROM user u
+    </select>
+
+    <!--<select id="login" resultMap="BaseResultMap" parameterType="com.wx.exam1.domain.Customer">-->
+    <!--SELECT c.*-->
+    <!--From customer c-->
+    <!--<where>-->
+    <!--<if test="customer.first_name !=null and customer.first_name!=null">-->
+    <!--c.first_name = #{customer.first_name}-->
+    <!--</if>-->
+    <!--<if test="customer.last_name!=null and customer.last_name!=null">-->
+    <!--AND c.last_name = #{customer.last_name}-->
+    <!--</if>-->
+    <!--</where>-->
+    <!--</select>-->
+
+    <!--<insert id="insertCustomer" keyProperty="customer_id" useGeneratedKeys="true"-->
+    <!--parameterType="com.wx.exam1.domain.Customer">-->
+    <!--INSERT INTO customer(first_name,last_name,email,address_id,store_id,create_date )-->
+    <!--VALUES(#{first_name},#{last_name},#{email},1,1,NOW())-->
+    <!--</insert>-->
+    <!--<update id="update" parameterType="com.wx.exam1.domain.Customer">-->
+    <!--UPDATE customer c-->
+    <!--<set>-->
+    <!--<if test="first_name!=null and first_name!=''">-->
+    <!--c.first_name=#{first_name},-->
+    <!--</if>-->
+    <!--<if test="last_name!=null and last_name!=''">-->
+    <!--c.last_name=#{last_name},-->
+    <!--</if>-->
+    <!--<if test="email!=null and email!=''">-->
+    <!--c.email=#{email},-->
+    <!--</if>-->
+    <!--<if test="address_id!=null and address_id!=''">-->
+    <!--c.address_id=#{address_id}-->
+    <!--</if>-->
+    <!--</set>-->
+    <!--WHERE c.customer_id=#{customer_id}-->
+    <!--</update>-->
+    <!--<select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+    <!--SELECT * FROM customer-->
+    <!--<where>-->
+    <!--<if test="customer_id!=null and customer_id!=null">-->
+    <!--customer_id= #{customer_id,jdbcType=INTEGER}-->
+    <!--</if>-->
+    <!--</where>-->
+    <!--</select>-->
+    <!--<delete id="deleteById" parameterType="java.lang.Short">-->
+    <!--DELETE FROM customer WHERE customer_id=#{customer_id,jdbcType=INTEGER }-->
+    <!--</delete>-->
+
+</mapper>
